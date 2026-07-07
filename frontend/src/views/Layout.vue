@@ -25,6 +25,10 @@
           <el-icon><Folder /></el-icon>
           <span>分类管理</span>
         </el-menu-item>
+        <el-menu-item index="/snake">
+          <el-icon><Trophy /></el-icon>
+          <span>贪吃蛇</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
@@ -41,6 +45,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { Trophy } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const activeMenu = computed(() => '/' + route.path.split('/')[1])
