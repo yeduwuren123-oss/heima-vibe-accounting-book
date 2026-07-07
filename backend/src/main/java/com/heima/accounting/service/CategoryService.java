@@ -39,6 +39,7 @@ public class CategoryService {
                             .id(c.getId())
                             .name(c.getName())
                             .sortOrder(c.getSortOrder())
+                            .preset(c.getPreset())
                             .build())
                     .collect(Collectors.toList());
 
@@ -46,6 +47,7 @@ public class CategoryService {
                     .id(level1.getId())
                     .name(level1.getName())
                     .sortOrder(level1.getSortOrder())
+                    .preset(level1.getPreset())
                     .children(childNodes)
                     .build());
         }
@@ -211,6 +213,51 @@ public class CategoryService {
                 .level(level)
                 .sortOrder(sort)
                 .type(type)
+                .preset(true)
                 .build());
+    }
+
+    /** 创建自定义分类（只能是二级分类，挂在一级分类下） */
+    public Category create(String name, Long parentId) {
+        Category parent = categoryRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("父分类不存在"));
+        if (parent.getLevel() != 1) {
+            throw new IllegalArgumentException("只能在一级分类下创建二级分类");
+        }
+
+        Category category = Category.builder()
+                .name(name)
+                .parentId(parentId)
+                .level(2)
+                .type(parent.getType())
+                .sortOrder(999)
+                .preset(false)
+                .build();
+        return categoryRepository.save(category);
+    }
+
+    /** 修改分类名称（只能修改非预置分类） */
+    public Category updateName(Long id, String name) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("分类不存在"));
+        if (Boolean.TRUE.equals(category.getPreset())) {
+            throw new IllegalArgumentException("预置分类不可修改");
+        }
+        category.setName(name);
+        return categoryRepository.save(category);
+    }
+
+    /** 删除分类（只能删除非预置分类，且分类下不能有子分类） */
+    public void delete(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("分类不存在"));
+        if (Boolean.TRUE.equals(category.getPreset())) {
+            throw new IllegalArgumentException("预置分类不可删除");
+        }
+        List<Category> children = categoryRepository.findByParentIdOrderBySortOrder(id);
+        if (!children.isEmpty()) {
+            throw new IllegalArgumentException("请先删除该分类下的子分类");
+        }
+        categoryRepository.deleteById(id);
     }
 }

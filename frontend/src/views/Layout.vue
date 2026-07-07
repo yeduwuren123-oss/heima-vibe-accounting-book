@@ -21,6 +21,10 @@
           <el-icon><DataAnalysis /></el-icon>
           <span>统计</span>
         </el-menu-item>
+        <el-menu-item index="/categories">
+          <el-icon><Folder /></el-icon>
+          <span>分类管理</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

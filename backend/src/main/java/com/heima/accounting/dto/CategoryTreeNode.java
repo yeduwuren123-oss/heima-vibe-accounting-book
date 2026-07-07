@@ -18,5 +18,6 @@ public class CategoryTreeNode {
     private Long id;
     private String name;
     private Integer sortOrder;
+    private Boolean preset;
     private List<CategoryTreeNode> children;
 }

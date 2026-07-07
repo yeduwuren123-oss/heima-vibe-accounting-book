@@ -37,4 +37,8 @@ public class Category {
     /** 排序号 */
     @Column(name = "sort_order")
     private Integer sortOrder;
+
+    /** 是否为预置分类（预置分类不可编辑/删除） */
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean preset;
 }
